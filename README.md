@@ -14,12 +14,12 @@
 
 ## Change Log
 
-Name of feature: ________________________________
+Name of feature: Creating Repo
 
-Estimate of time needed to complete: _____
+Estimate of time needed to complete: 40 mins
 
-Start time: _____
+Start time: 4:30
 
-Finish time: _____
+Finish time: 5:34
 
-Actual time needed to complete: _____
+Actual time needed to complete: 1hr
