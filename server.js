@@ -38,9 +38,9 @@ app.get('/hello', (request, response) => {
 
 app.get('/weather', (request, response, next) => {
   try{
-    let queriedCity = request.query.city;
+    let searchQuery = request.query.searchQuery;
 
-    let dataToGroom = data.find(city => city.city_name === queriedCity);
+    let dataToGroom = data.find(city => city.city_name === searchQuery);
     let dataToSend = new Forecast(dataToGroom);
 
     response.status(200).send(dataToSend);
@@ -51,8 +51,8 @@ app.get('/weather', (request, response, next) => {
 
 class Forecast {
   constructor(cityObj){
-    this.discription = cityObj.data.weather.description;
-    this.date = cityObj.data.valid_date;
+    this.date = cityObj.data[0].valid_date;
+    this.discription = cityObj.data[0].weather.description;
   }
 }
 
