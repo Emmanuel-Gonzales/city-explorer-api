@@ -40,7 +40,7 @@ app.get('/weather', (request, response, next) => {
   try{
     let searchQuery = request.query.searchQuery;
 
-    let dataToGroom = data.find(city => city.city_name === searchQuery);
+    let dataToGroom = data.find(city => city.city_name.toLowerCase() === searchQuery.toLowerCase());
     let dataToSend = new Forecast(dataToGroom);
 
     response.status(200).send(dataToSend);
