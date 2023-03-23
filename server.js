@@ -5,6 +5,7 @@ console.log('helloo world');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
+const axios = require('axios')
 
 let data = require('./data/weather.json');
 
@@ -38,6 +39,8 @@ app.get('/hello', (request, response) => {
 
 app.get('/weather', (request, response, next) => {
   try{
+    let lat = request.query.lat;
+    let lon = request.query.lot;
     let searchQuery = request.query.searchQuery;
 
     let dataToGroom = data.find(city => city.city_name.toLowerCase() === searchQuery.toLowerCase());
@@ -52,7 +55,7 @@ app.get('/weather', (request, response, next) => {
 class Forecast {
   constructor(cityObj){
     this.date = cityObj.data[0].valid_date;
-    this.discription = cityObj.data[0].weather.description;
+    this.description = cityObj.data[0].weather.description;
   }
 }
 
