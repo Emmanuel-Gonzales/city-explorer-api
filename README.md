@@ -32,3 +32,23 @@ Actual time needed to complete: 1hr
 Acc Partners: Logan Reese Chris.
 
 ![wrrc Diagram](img/WRRC.png)
+
+Name of feature: Weather API
+
+Estimate of time needed to complete: 1 hr
+
+Start time: 6:30
+
+Finish time: 8:32
+
+Actual time needed to complete: 2 hrs
+
+Name of feature: Movies API
+
+Estimate of time needed to complete: 1 hr
+
+Start time: 8:50
+
+Finish time: 12:00pm
+
+Actual time needed to complete: 3hrs
