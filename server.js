@@ -5,9 +5,10 @@ console.log('helloo world');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
-const axios = require('axios')
+const axios = require('axios');
+const { request, response } = require('express');
 
-let data = require('./data/weather.json');
+// let data = require('./data/weather.json');
 
 // *** app === server
 const app = express();
@@ -37,14 +38,17 @@ app.get('/hello', (request, response) => {
   response.status(200).send(`Hello ${userfirstName} ${userlastName}! Welcome to my Website`);
 });
 
-app.get('/weather', (request, response, next) => {
+app.get('/weather', async(request, response, next) => {
   try{
     let lat = request.query.lat;
-    let lon = request.query.lot;
-    let searchQuery = request.query.searchQuery;
+    let lon = request.query.lon;
 
-    let dataToGroom = data.find(city => city.city_name.toLowerCase() === searchQuery.toLowerCase());
-    let dataToSend = new Forecast(dataToGroom);
+    let url = `https://api.weatherbit.io/v2.0/forecast/daily?key=${process.env.WEATHER_API_KEY}&lat=${lat}&lon=${lon}&days=5&units=I`;
+
+    let weatherResults = await axios.get(url);
+
+    // let dataToGroom = data.find(city => city.city_name.toLowerCase() === searchQuery.toLowerCase());
+    let dataToSend = weatherResults.data.data.map(day => new Forecast(day));
 
     response.status(200).send(dataToSend);
   } catch(error){
@@ -54,8 +58,37 @@ app.get('/weather', (request, response, next) => {
 
 class Forecast {
   constructor(cityObj){
-    this.date = cityObj.data[0].valid_date;
-    this.description = cityObj.data[0].weather.description;
+    this.date = cityObj.datetime;
+    this.description = cityObj.weather.description;
+  }
+}
+
+app.get('/movies', async(request, response, next) => {
+  try {
+    let searchQuery = request.query.query;
+
+    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}&language=en-US&page=1&include_adult=false`;
+
+    let movieResults = await axios.get(url);
+
+    let dataToSend = movieResults.data.results.map(movie => new Movies(movie));
+
+    response.status(200).send(dataToSend);
+  } catch (error) {
+    next(error);
+  }
+
+});
+
+class Movies {
+  constructor(movieObj){
+    this.title = movieObj.title;
+    this.overview = movieObj.overview;
+    this.average_votes = movieObj.vote_average;
+    this.total_votes = movieObj.vote_count;
+    this.image_url = `https://image.tmdb.org/t/p/w500${movieObj.poster_path}`;
+    this.popularity = movieObj.popularity;
+    this.released_on = movieObj.release_date;
   }
 }
 
