@@ -8,17 +8,25 @@ async function getMovies(request, response, next) {
   try {
     let searchQuery = request.query.query;
 
-    let key = `{searchQuery}-Photo`;
+    let key = `${searchQuery}-Photo`;
 
-    if (cache[key] && (Date.now - cache[key].timestamp) < 1000) {
-      console.log(' Cashe was hit');
+    if (cache[key] && (Date.now() - cache[key].timestamp) < 8.64e+7) {
+      console.log('Movie Cache hit');
+
       response.status(200).send(cache[key].data);
     } else {
+      console.log('Movie Cache miss');
+
       let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}&language=en-US&page=1&include_adult=false`;
 
       let movieResults = await axios.get(url);
 
       let dataToSend = movieResults.data.results.map(movie => new Movies(movie));
+
+      cache[key] = {
+        data: dataToSend,
+        timestamp: Date.now()
+      };
 
       response.status(200).send(dataToSend);
     }
