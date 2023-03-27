@@ -2,24 +2,35 @@
 
 const axios = require('axios');
 
-async function getMovies(request, response, next){
+let cache = {};
+
+async function getMovies(request, response, next) {
   try {
     let searchQuery = request.query.query;
 
-    let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}&language=en-US&page=1&include_adult=false`;
+    let key = `{searchQuery}-Photo`;
 
-    let movieResults = await axios.get(url);
+    if (cache[key] && (Date.now - cache[key].timestamp) < 1000) {
+      console.log(' Cashe was hit');
+      response.status(200).send(cache[key].data);
+    } else {
+      let url = `https://api.themoviedb.org/3/search/movie?api_key=${process.env.MOVIE_API_KEY}&query=${searchQuery}&language=en-US&page=1&include_adult=false`;
 
-    let dataToSend = movieResults.data.results.map(movie => new Movies(movie));
+      let movieResults = await axios.get(url);
 
-    response.status(200).send(dataToSend);
+      let dataToSend = movieResults.data.results.map(movie => new Movies(movie));
+
+      response.status(200).send(dataToSend);
+    }
+
+
   } catch (error) {
     next(error);
   }
 }
 
 class Movies {
-  constructor(movieObj){
+  constructor(movieObj) {
     this.title = movieObj.title;
     this.overview = movieObj.overview;
     this.average_votes = movieObj.vote_average;
